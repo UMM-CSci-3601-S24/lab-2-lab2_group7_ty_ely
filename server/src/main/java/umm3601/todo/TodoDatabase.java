@@ -3,7 +3,7 @@ package umm3601.todo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TodoDatabase {
   private Todo[] allTodos;
 
-  public TodoDatabase (String todoDataFile) throws IOException {
+  public TodoDatabase(String todoDataFile) throws IOException {
     InputStream resourceAsStream = getClass().getResourceAsStream(todoDataFile);
     if (resourceAsStream == null) {
       throw new IOException("Could not find " + todoDataFile);
