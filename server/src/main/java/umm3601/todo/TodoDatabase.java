@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.javalin.http.BadRequestResponse;
+
 public class TodoDatabase {
   private Todo[] allTodos;
 
@@ -36,11 +38,11 @@ public class TodoDatabase {
   //     String targetOwner = queryParams.get("owner").get(0);
   //     filteredTodos = filteredTodosByOwner(filteredTodos, targetOwner);
   //   }
-  //   if (queryParams.containsKey("body")) {
-  //     String targetBody = queryParams.get("body").get(0);
-  //     filteredTodos = filteredTodosByBody(filteredTodos, targetBody);
-  //   }
-  //   if (queryParams.containsKey("category")) {
+      if (queryParams.containsKey("contains")) {
+        String targetBody = queryParams.get("contains").get(0);
+        filteredTodos = filteredTodosByBody(filteredTodos, targetBody);
+    }
+  //  if (queryParams.containsKey("category")) {
   //     String targetCategory = queryParams.get("category").get(0);
   //     filteredTodos = filteredTodosByCategory(filteredTodos, targetCategory);
   // }
@@ -59,9 +61,20 @@ public class TodoDatabase {
   //   return Arrays.stream(todos).filter(x -> x.category.equals(targetStatus)).toArray(Todo[]::new);
   // }
 
-  // private Todo[] filteredTodosByBody(Todo[] todos, String targetBody) {
-  //   return Arrays.stream(todos).filter(x -> x.category.equals(targetBody)).toArray(Todo[]::new);
-  // }
+  private Todo[] filteredTodosByBody(Todo[] todos, String targetBody) {
+    int n = 0;
+    String trimTargetBody = targetBody.trim();
+    if (trimTargetBody == "") {
+      throw new BadRequestResponse("Specified String '" + targetBody + "' is not a valid input");
+    }
+    for (int i = 0; i<todos.length; i++) {
+      if (todos[i].body.indexOf(trimTargetBody) != -1) {
+        todos[n++] = todos[i];
+      }
+    }
+    Todo[] filteredTodos = Arrays.copyOfRange(todos, 0, n);
+    return filteredTodos;
+  }
 
   // private Todo[] filteredTodosByOwner(Todo[] todos, String targetOwner) {
   //   return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
