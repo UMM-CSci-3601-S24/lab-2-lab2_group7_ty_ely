@@ -47,8 +47,11 @@ public class TodoDatabase {
     if (queryParams.containsKey("status")) {
       boolean b;
         String targetStatus = queryParams.get("status").get(0);
-        if (targetStatus.equals("complete")) b = true;
-        else b = false;
+        if (targetStatus.equals("complete")) {
+          b = true;
+        } else {
+          b = false;
+        }
         filteredTodos = filteredTodosByStatus(filteredTodos, b);
     }
     if (queryParams.containsKey("limit")) {
