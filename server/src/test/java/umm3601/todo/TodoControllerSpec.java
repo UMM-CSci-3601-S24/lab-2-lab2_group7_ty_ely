@@ -10,6 +10,10 @@ import java.io.IOException;
 // import java.util.HashMap;
 // import java.util.List;
 // import java.util.Map;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +90,16 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     assertEquals(db.size(), todoArrayCaptor.getValue().length);
+  }
+
+  @Test
+  public void canGetLimitedUsers() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("limit", Arrays.asList(new String[] {"20"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    assertEquals(20, todoArrayCaptor.getValue().length);
   }
 
    /* Confirm that we get a todo when using a valid user ID.

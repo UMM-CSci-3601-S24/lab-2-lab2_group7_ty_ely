@@ -48,6 +48,10 @@ public class TodoDatabase {
   //       String targetStatus = queryParams.get("status").get(0);
   //       filteredTodos = filteredTodosByStatus(filteredTodos, targetStatus);
   //   }
+    if (queryParams.containsKey("limit")) {
+      int targetStatus = Integer.parseInt(queryParams.get("limit").get(0));
+      filteredTodos = Arrays.copyOfRange(filteredTodos, 0, targetStatus);
+    }
     return filteredTodos;
   }
 
