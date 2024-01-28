@@ -46,10 +46,20 @@ public class TodoDatabase {
   //     String targetCategory = queryParams.get("category").get(0);
   //     filteredTodos = filteredTodosByCategory(filteredTodos, targetCategory);
   // }
-  // if (queryParams.containsKey("status")) {
-  //       String targetStatus = queryParams.get("status").get(0);
-  //       filteredTodos = filteredTodosByStatus(filteredTodos, targetStatus);
-  //   }
+    if (queryParams.containsKey("status")) {
+      boolean b;
+        String targetStatus = queryParams.get("status").get(0);
+        if (targetStatus.equals("complete")) {
+          b = true;
+        } else {
+          b = false;
+        }
+        filteredTodos = filteredTodosByStatus(filteredTodos, b);
+    }
+    if (queryParams.containsKey("limit")) {
+      int targetStatus = Integer.parseInt(queryParams.get("limit").get(0));
+      filteredTodos = Arrays.copyOfRange(filteredTodos, 0, targetStatus);
+    }
     return filteredTodos;
   }
 
@@ -57,9 +67,9 @@ public class TodoDatabase {
   //   return Arrays.stream(todos).filter(x -> x.category.equals(targetCategory)).toArray(Todo[]::new);
   // }
 
-  // private Todo[] filteredTodosByStatus(Todo[] todos, String targetStatus) {
-  //   return Arrays.stream(todos).filter(x -> x.category.equals(targetStatus)).toArray(Todo[]::new);
-  // }
+  private Todo[] filteredTodosByStatus(Todo[] todos, boolean targetStatus) {
+    return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
+  }
 
   private Todo[] filteredTodosByBody(Todo[] todos, String targetBody) {
     int n = 0;
