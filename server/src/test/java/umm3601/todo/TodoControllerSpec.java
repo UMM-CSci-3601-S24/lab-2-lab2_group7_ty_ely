@@ -1,6 +1,8 @@
 package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -94,6 +96,30 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     assertEquals(20, todoArrayCaptor.getValue().length);
+  }
+
+  @Test
+  public void canGetTodosByCompleteStatus() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {"complete"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertTrue(todo.status);
+    }
+  }
+
+  @Test
+  public void canGetTodosByIncompleteStatus() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {"incomplete"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertFalse(todo.status);
+    }
   }
 
    /* Confirm that we get a todo when using a valid user ID.
