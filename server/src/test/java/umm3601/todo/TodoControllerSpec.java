@@ -26,6 +26,7 @@ import io.javalin.Javalin;
 //import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import io.javalin.http.NotFoundResponse;
 //import io.javalin.http.NotFoundResponse;
 import umm3601.Main;
 
@@ -47,8 +48,8 @@ public class TodoControllerSpec {
   private ArgumentCaptor<Todo[]> todoArrayCaptor;
 
    /**
-   * Setup the "database" with some example users and
-   * create a UserController to exercise in the tests.
+   * Setup the "database" with some example todos and
+   * create a TodoController to exercise in the tests.
    *
    * @throws IOException if there are problems reading from the "database" file.
    */
@@ -86,6 +87,26 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     assertEquals(db.size(), todoArrayCaptor.getValue().length);
+  }
+
+  /**
+   * Confirm that we can get all the todos with a body that contains sit.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canGetUsersWithBodyContainsSit() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("contains", Arrays.asList(new String[] {"sit"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the todos passed to `json` contain sit in body.
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertTrue(todo.body.indexOf("sit") != -1);
+    }
   }
 
   @Test
@@ -139,6 +160,21 @@ public class TodoControllerSpec {
 
     verify(ctx).json(todo);
     verify(ctx).status(HttpStatus.OK);
+  }
+
+    /**
+   * Confirm that we get a 404 Not Found response when
+   * we request a todo ID that doesn't exist.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void respondsAppropriatelyToRequestForNonexistentId() throws IOException {
+    when(ctx.pathParam("id")).thenReturn(null);
+    Throwable exception = Assertions.assertThrows(NotFoundResponse.class, () -> {
+      todoController.getTodo(ctx);
+    });
+    assertEquals("No todo with id " + null + " was found.", exception.getMessage());
   }
 
 }
