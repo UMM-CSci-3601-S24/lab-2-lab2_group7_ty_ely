@@ -67,7 +67,7 @@ public class TodoDatabase {
     if (trimTargetBody == "") {
       throw new BadRequestResponse("Specified String '" + targetBody + "' is not a valid input");
     }
-    for (int i = 0; i<todos.length; i++) {
+    for (int i = 0; i < todos.length; i++) {
       if (todos[i].body.indexOf(trimTargetBody) != -1) {
         todos[n++] = todos[i];
       }

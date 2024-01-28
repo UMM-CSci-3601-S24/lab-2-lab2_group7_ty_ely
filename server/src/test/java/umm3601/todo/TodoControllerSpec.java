@@ -1,15 +1,12 @@
 package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-// import java.util.Arrays;
-// import java.util.HashMap;
-// import java.util.List;
-// import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +28,6 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 //import io.javalin.http.NotFoundResponse;
 import umm3601.Main;
-// import umm3601.user.UserController;
-// import umm3601.user.UserDatabase;
 
 /**
  * Tests the logic of the TodoController
@@ -101,7 +96,7 @@ public class TodoControllerSpec {
   @Test
   public void canGetUsersWithBodyContainsSit() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put("body", Arrays.asList(new String[] {"Fry"}));
+    queryParams.put("contains", Arrays.asList(new String[] {"sit"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
 
     todoController.getTodos(ctx);
@@ -109,7 +104,7 @@ public class TodoControllerSpec {
     // Confirm that all the todos passed to `json` contain sit in body.
     verify(ctx).json(todoArrayCaptor.capture());
     for (Todo todo : todoArrayCaptor.getValue()) {
-      assertEquals("Fry", todo.owner);
+      assertTrue(todo.body.indexOf("sit") != -1);
     }
   }
 
