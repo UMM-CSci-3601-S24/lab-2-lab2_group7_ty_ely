@@ -88,8 +88,8 @@ public class TodoControllerSpec {
     verify(ctx).json(todoArrayCaptor.capture());
     assertEquals(db.size(), todoArrayCaptor.getValue().length);
   }
-  
-    /**
+
+  /**
    * Confirm that we can get all the todos with a body that contains sit.
    *
    * @throws IOException if there are problems reading from the "database" file.
