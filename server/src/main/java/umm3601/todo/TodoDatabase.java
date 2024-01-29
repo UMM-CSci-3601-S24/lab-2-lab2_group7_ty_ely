@@ -34,10 +34,10 @@ public class TodoDatabase {
 
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
-  //   if (queryParams.containsKey("owner")) {
-  //     String targetOwner = queryParams.get("owner").get(0);
-  //     filteredTodos = filteredTodosByOwner(filteredTodos, targetOwner);
-  //   }
+      if (queryParams.containsKey("owner")) {
+        String targetOwner = queryParams.get("owner").get(0);
+        filteredTodos = filteredTodosByOwner(filteredTodos, targetOwner);
+    }
       if (queryParams.containsKey("contains")) {
         String targetBody = queryParams.get("contains").get(0);
         filteredTodos = filteredTodosByBody(filteredTodos, targetBody);
@@ -88,8 +88,8 @@ public class TodoDatabase {
     return filteredTodos;
   }
 
-  // private Todo[] filteredTodosByOwner(Todo[] todos, String targetOwner) {
-  //   return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
-  // }
+  private Todo[] filteredTodosByOwner(Todo[] todos, String targetOwner) {
+    return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
+  }
 
 }
