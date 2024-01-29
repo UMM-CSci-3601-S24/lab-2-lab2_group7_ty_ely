@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 //import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -118,6 +119,23 @@ public class TodoControllerSpec {
     verify(ctx).json(todoArrayCaptor.capture());
     assertEquals(20, todoArrayCaptor.getValue().length);
   }
+
+  /**
+* Test that if the user sends a request with an illegal value in
+* the limit field (i.e., something that can't be parsed to a number)
+* we get a reasonable error code back.
+*/
+  @Test
+  public void respondsAppropriatelyToIllegalAge() {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("limit", Arrays.asList(new String[] {"abc"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    Throwable exception = Assertions.assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodos(ctx);
+    });
+    assertEquals("Specified limit '" + "abc" + "' can't be parsed to an integer", exception.getMessage());
+  }
+
 
   @Test
   public void canGetTodosByCompleteStatus() throws IOException {
