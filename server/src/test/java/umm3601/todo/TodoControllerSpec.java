@@ -195,4 +195,44 @@ public class TodoControllerSpec {
     assertEquals("No todo with id " + null + " was found.", exception.getMessage());
   }
 
+   /**
+   * Confirm that we can get all the todos with owner Fry.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canGetUsersWithOwner() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("owner", Arrays.asList(new String[] {"Fry"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the users passed to `json` work for OHMNET.
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertEquals("Fry", todo.owner);
+    }
+  }
+
+  /**
+   * Confirm that we can get all the todos with category video games.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canGetUsersWithCategory() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] {"video games"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the users passed to `json` work for OHMNET.
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertEquals("video games", todo.category);
+    }
+  }
+
 }
