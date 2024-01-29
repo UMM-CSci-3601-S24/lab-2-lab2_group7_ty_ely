@@ -28,6 +28,18 @@ function getFilteredTodos() {
 
   get(url, function(returned_json){
     document.getElementById("requestUrl").innerHTML = url;
-    document.getElementById('jsonDump').innerHTML = syntaxHighlight(JSON.stringify(returned_json, null, 2));
+    document.getElementById('jsonDump').innerHTML = syntaxHighlight(JSON.stringify(returned_json, replacer, 2));
   });
+}
+
+const replacer = (key, value) => {
+  if (key === "status") {
+    if (value === true) {
+      return "Complete"
+    }
+    else {
+      return "Incomplete"
+    }
+  }
+  return value
 }
