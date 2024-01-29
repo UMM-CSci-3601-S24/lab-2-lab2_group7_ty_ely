@@ -233,4 +233,43 @@ public class TodoControllerSpec {
     }
   }
 
+  @Test
+  public void canOrderOutputOfTodosByOwner() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"owner"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].owner.compareTo(todoArrayCaptor.getValue()[i+1].owner) != -1);
+    }
+  }
+
+  @Test
+  public void canOrderOutputOfTodosByCategory() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"category"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].category.compareTo(todoArrayCaptor.getValue()[i+1].category) != -1);
+    }
+  }
+
+  @Test
+  public void canOrderOutputOfTodosByBody() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"body"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].body.compareTo(todoArrayCaptor.getValue()[i+1].body) != -1);
+    }
+  }
+
 }
