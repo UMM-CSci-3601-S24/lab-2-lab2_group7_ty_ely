@@ -56,6 +56,10 @@ public class TodoDatabase {
         }
         filteredTodos = filteredTodosByStatus(filteredTodos, b);
     }
+    if (queryParams.containsKey("orderBy")) {
+      String orderBy = queryParams.get("orderBy").get(0);
+      filteredTodos = filteredTodosByOrder(filteredTodos, orderBy);
+    }
     // Limiting output
     if (queryParams.containsKey("limit")) {
       String limitParam = queryParams.get("limit").get(0);
@@ -69,6 +73,22 @@ public class TodoDatabase {
       }
     }
     return filteredTodos;
+  }
+
+  private Todo[] filteredTodosByOrder(Todo[] todos, String orderBy) {
+    if (orderBy.equals("owner")) {
+      Arrays.sort(todos, new SortByOwner());
+    }
+    if (orderBy.equals("category")) {
+      Arrays.sort(todos, new SortByCategory());
+    }
+    if (orderBy.equals("body")) {
+      Arrays.sort(todos, new SortByBody());
+    }
+    if (orderBy.equals("status")) {
+      Arrays.sort(todos, new SortByStatus());
+    }
+    return todos;
   }
 
   private Todo[] filteredTodosByCategory(Todo[] todos, String targetCategory) {
