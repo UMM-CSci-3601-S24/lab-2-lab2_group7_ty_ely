@@ -24,11 +24,9 @@ import org.mockito.MockitoAnnotations;
 
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-//import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
-//import io.javalin.http.NotFoundResponse;
 import umm3601.Main;
 
 /**
@@ -83,6 +81,11 @@ public class TodoControllerSpec {
     });
   }
 
+   /**
+   * Confirm that we can get all the todos
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
   @Test
   public void canGetAllUsers() throws IOException {
     todoController.getTodos(ctx);
@@ -110,6 +113,11 @@ public class TodoControllerSpec {
     }
   }
 
+   /**
+   * Confirm that we can get limited number of todos
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
   @Test
   public void canGetLimitedUsers() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -121,10 +129,10 @@ public class TodoControllerSpec {
   }
 
   /**
-* Test that if the user sends a request with an illegal value in
-* the limit field (i.e., something that can't be parsed to a number)
-* we get a reasonable error code back.
-*/
+  * Test that if the user sends a request with an illegal value in
+  * the limit field (i.e., something that can't be parsed to a number)
+  * we get a reasonable error code back.
+  */
   @Test
   public void respondsAppropriatelyToIllegalAge() {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -136,7 +144,11 @@ public class TodoControllerSpec {
     assertEquals("Specified limit '" + "abc" + "' can't be parsed to an integer", exception.getMessage());
   }
 
-
+   /**
+   * Confirm that we can get all the todos with status complete.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
   @Test
   public void canGetTodosByCompleteStatus() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -149,6 +161,11 @@ public class TodoControllerSpec {
     }
   }
 
+   /**
+   * Confirm that we can get all the todos with status incomplete.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
   @Test
   public void canGetTodosByIncompleteStatus() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -161,7 +178,8 @@ public class TodoControllerSpec {
     }
   }
 
-   /* Confirm that we get a todo when using a valid user ID.
+   /**
+   * Confirm that we get a todo when using a valid user ID.
    *
    * @throws IOException if there are problems reading from the "database" file.
    */
@@ -180,7 +198,7 @@ public class TodoControllerSpec {
     verify(ctx).status(HttpStatus.OK);
   }
 
-    /**
+   /**
    * Confirm that we get a 404 Not Found response when
    * we request a todo ID that doesn't exist.
    *
@@ -215,7 +233,7 @@ public class TodoControllerSpec {
     }
   }
 
-  /**
+   /**
    * Confirm that we can get all the todos with category video games.
    *
    * @throws IOException if there are problems reading from the "database" file.
@@ -234,5 +252,110 @@ public class TodoControllerSpec {
       assertEquals("video games", todo.category);
     }
   }
+
+   /**
+   * Confirm that we can get all the todos ordered by owner.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canOrderOutputOrderOfTodosByOwner() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"owner"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].owner.compareTo(todoArrayCaptor.getValue()[i + 1].owner) <= 0);
+    }
+  }
+
+   /**
+   * Confirm that we can get all the todos ordered by category.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canOrderOutputOrderOfTodosByCategory() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"category"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].category.compareTo(todoArrayCaptor.getValue()[i + 1].category) <= 0);
+    }
+  }
+
+   /**
+   * Confirm that we can get all the todos ordered by body.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canOrderOutputOrderOfTodosByBody() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"body"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (int i = 0; i < todoArrayCaptor.getValue().length - 1; i++) {
+      assertTrue(todoArrayCaptor.getValue()[i].body.compareTo(todoArrayCaptor.getValue()[i + 1].body) <= 0);
+    }
+  }
+
+   /**
+   * Confirm that we can get all the todos ordered by status.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canOrderOutputOrderOfTodosByStatus() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"status"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    int i = 0;
+    while (!todoArrayCaptor.getValue()[i].status) {
+      i++;
+    }
+    while (i < todoArrayCaptor.getValue().length) {
+      assertTrue(todoArrayCaptor.getValue()[i++].status);
+    }
+  }
+
+  /**
+   * Confirm that we can get all the users with owner Fry, category video games, contains sit, and status true.
+   * This is a "combination" test that tests the interaction of the
+   * `owner`, `category`, 'contains' and 'status' query parameters.
+   *
+   * @throws IOException if there are problems reading from the "database" file.
+   */
+  @Test
+  public void canGetUsersWithGivenOwnerAndCategoryAndStatus() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] {"video games"}));
+    queryParams.put("owner", Arrays.asList(new String[] {"Fry"}));
+    queryParams.put("status", Arrays.asList(new String[] {"complete"}));
+    queryParams.put("contains", Arrays.asList(new String[] {"sit"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the users passed to `json` have owner Fry, category video games, contains sit, and status true
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertEquals("Fry", todo.owner);
+      assertEquals("video games", todo.category);
+      assertEquals(true, todo.status);
+      assertTrue(todo.body.indexOf("sit") != -1);
+    }
+  }
+
 
 }
