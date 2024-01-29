@@ -56,10 +56,16 @@ public class TodoDatabase {
         }
         filteredTodos = filteredTodosByStatus(filteredTodos, b);
     }
+    // Limiting output
     if (queryParams.containsKey("limit")) {
-      int targetStatus = Integer.parseInt(queryParams.get("limit").get(0));
-      if (filteredTodos.length > targetStatus) {
-        filteredTodos = Arrays.copyOfRange(filteredTodos, 0, targetStatus);
+      String limitParam = queryParams.get("limit").get(0);
+      try {
+        int targetLimit = Integer.parseInt(limitParam);
+        if (filteredTodos.length > targetLimit) {
+          filteredTodos = Arrays.copyOfRange(filteredTodos, 0, targetLimit);
+        }
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + limitParam + "' can't be parsed to an integer");
       }
     }
     return filteredTodos;
